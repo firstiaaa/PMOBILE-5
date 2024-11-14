@@ -1,12 +1,9 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show ViewportOffset;
-import 'filter_selector.dart'; // Import untuk FilterSelector
-import 'filter_item.dart'; // Import untuk FilterItem
+import 'filter_selector.dart';
+import 'filter_item.dart';
 
-@immutable
 class PhotoFilterCarousel extends StatefulWidget {
-  const PhotoFilterCarousel({super.key});
+  const PhotoFilterCarousel({Key? key}) : super(key: key);
 
   @override
   State<PhotoFilterCarousel> createState() => _PhotoFilterCarouselState();
@@ -29,17 +26,16 @@ class _PhotoFilterCarouselState extends State<PhotoFilterCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.black,
-      child: Stack(
+    return Scaffold(
+      body: Stack(
         children: [
           Positioned.fill(
             child: _buildPhotoWithFilter(),
           ),
           Positioned(
-            left: 0.0,
-            right: 0.0,
-            bottom: 0.0,
+            left: 0,
+            right: 0,
+            bottom: MediaQuery.of(context).viewInsets.bottom,
             child: _buildFilterSelector(),
           ),
         ],
@@ -51,20 +47,33 @@ class _PhotoFilterCarouselState extends State<PhotoFilterCarousel> {
     return ValueListenableBuilder(
       valueListenable: _filterColor,
       builder: (context, color, child) {
-        return Image.network(
-          'https://docs.flutter.dev/cookbook/img-files/effects/instagram-buttons/millennial-dude.jpg',
-          color: color.withOpacity(0.5),
-          colorBlendMode: BlendMode.color,
-          fit: BoxFit.cover,
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(
+                'https://docs.flutter.dev/cookbook/img-files/effects/instagram-buttons/millennial-dude.jpg',
+              ),
+              colorFilter: ColorFilter.mode(
+                color.withOpacity(0.5),
+                BlendMode.color,
+              ),
+              fit: BoxFit.cover,
+            ),
+          ),
         );
       },
     );
   }
 
   Widget _buildFilterSelector() {
-    return FilterSelector(
-      onFilterChanged: _onFilterChanged,
-      filters: _filters,
+    return Container(
+      color: Colors.black.withOpacity(0.5),
+      padding: const EdgeInsets.all(16.0),
+      child: FilterSelector(
+        onFilterChanged: _onFilterChanged,
+        filters: _filters,
+      ),
     );
   }
 }
